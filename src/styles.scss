@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles */
+
+.card {
+  border: none;
+  border-radius: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input-group .btn {
+  border-left: none;
+}
+
+input.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
