@@ -12,7 +12,7 @@ Aplicación frontend de **CLINK**: gestión de enlaces acortados con enfoque en 
 | UI | Bootstrap 5.3 (CSS + bundle JS vía `angular.json`) |
 | Feedback | SweetAlert2 |
 | Tests | Vitest (`ng test`) |
-| Backend | Spring Boot 3.x + JWT + PostgreSQL (separado) |
+| Backend | Spring Boot + JWT + PostgreSQL (separado) |
 
 ## Requisitos
 
@@ -44,7 +44,7 @@ src/app/
 │   └── utils/                 # form.utils.ts (passwordsIguales)
 ├── features/
 │   ├── auth/                  # login/, registro/ (standalone, lazy)
-│   └── dashboard/             # placeholder con navbar + logout
+│   └── dashboard/             # contenedor, rutas hijas, métricas, enlaces y QR
 ├── app.routes.ts              # rutas lazy + guards
 └── app.config.ts              # provideHttpClient(withInterceptors([jwt, error]))
 ```
@@ -54,10 +54,10 @@ src/app/
 ## Módulo de autenticación
 
 - **Registro** (`/registro`): nombre (3-100), email (≤150), password (6-50), confirmar con validador `passwordsIguales`. Éxito → SweetAlert verde → `/login?email=...` prellenado.
-- **Login** (`/login`): lee queryParam `email` en `ngOnInit`. Éxito → guarda token (`clink_token`) → SweetAlert de bienvenida → `/dashboard`.
+- **Login** (`/login`): lee queryParam `email` en `ngOnInit`. Éxito → guarda token (`clink_token`) e identificador (`clink_usuarioId`) → SweetAlert de bienvenida → `/dashboard`.
 - **Errores**: siempre vía `extraerMensajeError(err, fallback)` — jamás `err.error.mensaje` directo.
 - **Guards**: `publicGuard` (redirige a `/dashboard` si hay sesión), `authGuard` (redirige a `/login` si no hay sesión).
-- **Sesión**: botón "Cerrar sesión" en la navbar del dashboard → borra token → `/login`.
+- **Sesión**: botón "Cerrar sesión" al pie del panel lateral → borra token e identificador → `/login`.
 
 ### Endpoints backend (públicos)
 
@@ -68,18 +68,21 @@ src/app/
 
 Nota: el backend responde `400` con mensaje en credenciales inválidas y `403` (no 401) en rutas protegidas sin token — por eso el interceptor de errores actúa en **401 y 403**.
 
-### Credenciales de prueba
+### Cuentas de prueba
 
-```
-Email:     test.clink.1794383899@example.com
-Password:  Secret123
-```
+Hay dos cuentas locales con rol **CLIENTE**, una con plan Gratuito y otra con Premium. Los correos, pasos para ingresar, diferencias y preparación en otra base están en [la guía de cuentas de prueba](docs/cuentas-de-prueba.md).
 
 ## Verificación
 
-- **27/27 casos PASS**: validaciones cliente (R1-R5, L1-L3), integración backend (R6-R9, L4-L7), guards (G1-G3), PostgreSQL (DB1-DB5: plan_id=1, rol=CLIENTE, hash `$2a$`, activo), seguridad (S1-S3).
-- Unit tests: `src/app/auth-verification.spec.ts` (11 casos) + `app.spec.ts`.
+- **24 pruebas unitarias aprobadas**: autenticación, guards, validaciones, API del dashboard, métricas, límite mixto de recursos, búsqueda, filtros y paginación.
+- Compilación de producción y prerender correctos con `npm run build`. Persiste una advertencia por superar el presupuesto inicial de 500 kB.
+- Pruebas de interfaz en Chrome con API simulada: escritorio, móvil de 390 px, creación, búsqueda, cancelar/confirmar eliminación, navegación, cuenta sin QR y recuperación de errores.
+- Se verificaron el registro, el inicio de sesión y el perfil/plan de las cuentas locales con la API real. La prueba completa del dashboard contra Spring Boot y PostgreSQL sigue pendiente.
 
 ## Escalado previsto
 
-Módulos futuros sin refactor: **enlaces, etiquetas, reservas, reportes** — todos sobre `AuthService`, guards, interceptores y componentes shared existentes.
+Módulos futuros sin refactor: **etiquetas, campañas, generación de QR, reportes y administración** — todos sobre `AuthService`, guards, interceptores y componentes shared existentes.
+
+## Dashboard
+
+El dashboard incorpora resumen de métricas, gestión de enlaces, estadísticas y consulta/descarga de QR. Consulta [la documentación del dashboard](docs/dashboard.md) para ver rutas, componentes, validación y diferencias pendientes del backend.

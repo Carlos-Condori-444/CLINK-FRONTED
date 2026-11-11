@@ -1,0 +1,49 @@
+<section class="heading">
+  <div><div class="eyebrow">DASHBOARD</div><h1>{{ titulos[vista] }}</h1><p>{{ descripciones[vista] }}</p></div>
+  <div class="heading-actions"><button class="secondary" (click)="data.cargar()" [disabled]="data.cargando()" aria-label="Actualizar datos" title="Actualizar datos"><app-icon name="refresh" /><span>Actualizar</span></button>
+    @if (vista === 'resumen' || vista === 'enlaces') { <button class="primary" (click)="mostrarFormulario.set(true)" [disabled]="!data.puedeCrear()"><app-icon name="plus" /> Crear enlace</button> }
+  </div>
+</section>
+@if (mensaje()) { <div class="notice" role="status">{{ mensaje() }}<button (click)="mensaje.set('')" aria-label="Cerrar mensaje"><app-icon name="close" /></button></div> }
+@if (data.cargando()) {
+  <div class="loading" role="status"><span class="spinner-border spinner-border-sm"></span> Cargando tus conexiones…</div>
+} @else if (data.error()) {
+  <section class="error-panel" role="alert"><span class="state-icon"><app-icon name="link" /></span><h2>No pudimos abrir tu espacio</h2><p>{{ data.error() }}</p>
+    @if (data.sesionIncompleta()) { <button class="primary" (click)="volverLogin()">Volver a iniciar sesión <app-icon name="arrow" /></button> }
+    @else { <button class="primary" (click)="data.cargar()"><app-icon name="refresh" /> Reintentar</button> }
+  </section>
+} @else if (data.perfil()) {
+  @if (mostrarFormulario()) {
+    <app-enlace-form [guardando]="guardando()" [permitido]="data.puedeCrear()" [error]="errorFormulario()" (guardar)="crear($event)" (cancelar)="mostrarFormulario.set(false); errorFormulario.set('')" />
+  }
+  @if (!data.puedeCrear() && (vista === 'resumen' || vista === 'enlaces')) { <div class="limit-notice" role="status">Alcanzaste los {{ data.limite() }} recursos de tu plan. Puedes eliminar un enlace para liberar espacio.</div> }
+  @if (vista === 'resumen') {
+    <app-dashboard-welcome [nombre]="data.perfil()!.nombre" [permitido]="data.puedeCrear()" (crear)="mostrarFormulario.set(true)" />
+  }
+  @if (vista !== 'qr') {
+    <section class="metrics" aria-label="Métricas acumuladas">
+      <app-metric-card titulo="Enlaces creados" [valor]="data.enlaces().length" detalle="En tu espacio de trabajo" icono="link" />
+      <app-metric-card titulo="Clics en enlaces" [valor]="data.totalClics()" detalle="Acumulados en tus enlaces actuales" icono="cursor" color="#4485b7" />
+      <app-metric-card titulo="Enlaces activos" [valor]="data.activos()" detalle="Listos para recibir visitas" icono="check" color="#499b79" />
+      <app-metric-card titulo="Códigos QR" [valor]="data.qrs().length" detalle="Creados en tu cuenta" icono="qr" color="#bf9260" />
+    </section>
+  }
+  @if (vista === 'resumen' || vista === 'estadisticas') {
+    <app-dashboard-analytics />
+  }
+  @if (vista === 'resumen' || vista === 'enlaces') {
+    <section class="panel links-panel"><div class="panel-heading"><div><h2>{{ vista === 'resumen' ? 'Enlaces recientes' : 'Todos tus enlaces' }} <span class="total-tag">{{ data.enlaces().length }}</span></h2><p>{{ vista === 'resumen' ? 'Tus últimas conexiones, en un vistazo' : 'Organiza y consulta tus conexiones' }}</p></div>
+      @if (vista === 'resumen') { <a class="text-link" routerLink="/dashboard/enlaces">Ver todos <app-icon name="arrow" /></a> }
+    </div>
+    @if (vista === 'enlaces') { <div class="filters"><div class="search"><app-icon name="search" /><input type="search" aria-label="Buscar enlaces" placeholder="Buscar por nombre, URL o canal…" [value]="busqueda()" (input)="buscar($event)" /></div><select aria-label="Filtrar por estado" [value]="filtroEstado()" (change)="filtrar($event)"><option value="TODOS">Todos los estados</option><option value="ACTIVO">Activos</option><option value="INACTIVO">Inactivos</option><option value="EXPIRADO">Expirados</option></select></div> }
+    <app-enlaces-table [enlaces]="visibles()" [ocupado]="eliminando() || data.cargando()" [vacio]="busqueda() || filtroEstado() !== 'TODOS' ? 'Prueba otra búsqueda o cambia el filtro.' : 'Crea tu primer enlace para comenzar.'" (copiar)="copiar($event)" (eliminar)="eliminar($event)" />
+    <div class="table-footer"><span>{{ vista === 'resumen' ? visibles().length : filtrados().length }} {{ vista === 'resumen' ? 'enlaces recientes' : 'resultados' }}</span>
+      @if (vista === 'enlaces') { <div class="pagination-controls"><button class="secondary" [disabled]="paginaActual() === 1" (click)="pagina.set(paginaActual() - 1)">Anterior</button><span>{{ paginaActual() }} / {{ paginas() }}</span><button class="secondary" [disabled]="paginaActual() === paginas()" (click)="pagina.set(paginaActual() + 1)">Siguiente</button></div> }
+      @else { <span>Ordenados del más reciente al más antiguo</span> }
+    </div></section>
+  }
+  @if (vista === 'estadisticas') { <p class="data-note">Las métricas corresponden a los enlaces actuales de tu cuenta y no incluyen los clics de QR independientes ni de enlaces eliminados.</p> }
+  @if (vista === 'qr') {
+    <app-dashboard-qr [qrs]="data.qrs()" [descargando]="descargando()" (descargar)="descargar($event)" />
+  }
+}

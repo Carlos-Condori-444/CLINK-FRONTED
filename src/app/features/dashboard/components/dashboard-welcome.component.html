@@ -1,0 +1,4 @@
+    <section class="welcome">
+      <div><span class="welcome-tag"><app-icon name="spark" /> CADA ENLACE ES UNA OPORTUNIDAD</span><h2>Hola, {{ nombre().split(' ')[0] }}.<br>Conecta tus ideas con el mundo.</h2><p>Acorta, comparte y descubre el impacto de tus enlaces.<br>Tu próxima gran conexión empieza aquí.</p><button class="welcome-button" (click)="crear.emit()" [disabled]="!permitido()">Crear mi enlace <app-icon name="arrow" /></button></div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-dot dot-one"></span><span class="art-dot dot-two"></span><div class="floating-tile tile-one"><app-icon name="cursor" /></div><div class="hero-chain"><app-icon name="link" /></div><div class="floating-tile tile-two"><app-icon name="chart" /></div><span class="art-label">Menos caracteres. Más conexiones.</span></div>
+    </section>

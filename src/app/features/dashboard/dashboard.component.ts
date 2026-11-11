@@ -1,27 +1,27 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { DashboardService } from './dashboard.service';
+import { IconComponent } from './components/icon.component';
 
 @Component({
   selector: 'app-dashboard',
-  template: `
-    <nav class="navbar navbar-light bg-light px-3 mb-4 shadow-sm">
-      <span class="navbar-brand fw-bold mb-0">CLINK</span>
-      <button class="btn btn-outline-danger btn-sm" (click)="logout()">
-        Cerrar sesión
-      </button>
-    </nav>
-    <div class="container py-5 text-center">
-      <p class="text-muted">Dashboard — próximamente</p>
-    </div>
-  `
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, IconComponent],
+  providers: [DashboardService],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  readonly data = inject(DashboardService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-
-  logout(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
-  }
+  readonly menuAbierto = signal(false);
+  readonly navegacion = [
+    { ruta: '/dashboard', titulo: 'Vista general', icono: 'grid', exacta: true },
+    { ruta: '/dashboard/enlaces', titulo: 'Mis enlaces', icono: 'link', exacta: false },
+    { ruta: '/dashboard/estadisticas', titulo: 'Estadísticas', icono: 'chart', exacta: false },
+    { ruta: '/dashboard/qr', titulo: 'Códigos QR', icono: 'qr', exacta: false }
+  ];
+  ngOnInit(): void { this.data.cargar(); }
+  logout(): void { this.auth.logout(); void this.router.navigate(['/login']); }
 }
