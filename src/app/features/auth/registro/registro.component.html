@@ -1,0 +1,81 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100 py-4">
+  <div class="card shadow-lg p-4" style="max-width: 480px; width: 100%;">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">CLINK</h2>
+      <p class="text-muted mb-0">Crea tu cuenta gratuita</p>
+      <small class="text-muted">Plan Gratuito · 10 recursos incluidos</small>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Nombre -->
+      <div class="mb-3">
+        <label class="form-label">Nombre completo</label>
+        <input
+          type="text"
+          class="form-control"
+          [class.is-invalid]="form.get('nombre')!.invalid && form.get('nombre')!.touched"
+          formControlName="nombre"
+          placeholder="Ej. Alfonso Pérez"
+          autocomplete="name">
+        <app-form-error [control]="form.get('nombre')" [reglas]="reglasNombre" />
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label">Correo electrónico</label>
+        <input
+          type="email"
+          class="form-control"
+          [class.is-invalid]="form.get('email')!.invalid && form.get('email')!.touched"
+          formControlName="email"
+          placeholder="tu@correo.com"
+          autocomplete="email">
+        <app-form-error [control]="form.get('email')" [reglas]="reglasEmail" />
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <app-password-input
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          autocomplete="new-password"
+          [invalid]="form.get('password')!.invalid && form.get('password')!.touched" />
+        <app-form-error [control]="form.get('password')" [reglas]="reglasPassword" />
+      </div>
+
+      <!-- Confirmar Password -->
+      <div class="mb-3">
+        <label class="form-label">Confirmar contraseña</label>
+        <app-password-input
+          formControlName="confirmarPassword"
+          placeholder="Repite tu contraseña"
+          autocomplete="new-password"
+          [invalid]="form.get('confirmarPassword')!.invalid && form.get('confirmarPassword')!.touched" />
+        <app-form-error [control]="form.get('confirmarPassword')" [reglas]="reglasConfirmar" />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        class="btn btn-primary w-100 mt-2"
+        [disabled]="cargando">
+        @if (cargando) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Creando cuenta...
+        } @else {
+          Crear cuenta
+        }
+      </button>
+    </form>
+
+    <hr class="my-3">
+
+    <div class="text-center">
+      <small>¿Ya tienes cuenta?
+        <a routerLink="/login">Inicia sesión</a>
+      </small>
+    </div>
+  </div>
+</div>
