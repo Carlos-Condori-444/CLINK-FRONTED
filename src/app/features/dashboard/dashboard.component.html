@@ -1,0 +1,39 @@
+<div class="workspace" (keydown.escape)="menuAbierto.set(false)">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <aside id="dashboard-nav" class="sidebar" [class.open]="menuAbierto()" aria-label="Navegación principal">
+    <a class="brand" routerLink="/dashboard"><span class="brand-mark"><app-icon name="link" /></span> clink<span class="brand-dot">.</span></a>
+    <div class="workspace-label">TU ESPACIO DE TRABAJO</div>
+    <nav>
+      @for (item of navegacion; track item.ruta) {
+        <a [routerLink]="item.ruta" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: item.exacta }" ariaCurrentWhenActive="page" (click)="menuAbierto.set(false)">
+          <app-icon [name]="item.icono" /> {{ item.titulo }}
+          @if (item.icono === 'link' && data.perfil()) { <span class="nav-count">{{ data.enlaces().length }}</span> }
+        </a>
+      }
+    </nav>
+    <div class="sidebar-bottom">
+      @if (data.perfil(); as perfil) {
+        <section class="plan-card" aria-label="Consumo de tu plan">
+          <div class="plan-title"><app-icon name="spark" /> {{ perfil.planNombre }}</div>
+          <p>{{ data.usados() }} de {{ data.limite() }} recursos utilizados</p>
+          <progress [value]="data.usados()" [max]="data.limite()" aria-label="Recursos utilizados"></progress>
+          <small>Enlaces y códigos QR activos</small>
+        </section>
+      }
+      <div class="account">
+        <span class="avatar">{{ data.perfil()?.nombre?.charAt(0)?.toUpperCase() || 'C' }}</span>
+        <div><strong>{{ data.perfil()?.nombre || 'Mi cuenta' }}</strong><small>{{ data.perfil()?.email || 'CLINK' }}</small></div>
+        <button class="icon-button" (click)="logout()" aria-label="Cerrar sesión" title="Cerrar sesión"><app-icon name="logout" /></button>
+      </div>
+    </div>
+  </aside>
+  @if (menuAbierto()) { <button class="backdrop" (click)="menuAbierto.set(false)" aria-label="Cerrar navegación"></button> }
+  <div class="main-area">
+    <header class="topbar">
+      <div><button class="mobile-menu icon-button" (click)="menuAbierto.set(!menuAbierto())" [attr.aria-expanded]="menuAbierto()" aria-controls="dashboard-nav" aria-label="Abrir navegación"><app-icon name="menu" /></button><span class="topbar-title">Mi espacio <span>/</span> Dashboard</span></div>
+      <div class="topbar-right"><span class="private-label"><span></span> Espacio personal</span><span class="avatar small">{{ data.perfil()?.nombre?.charAt(0)?.toUpperCase() || 'C' }}</span></div>
+    </header>
+    <main id="contenido"><router-outlet /></main>
+    <footer>CLINK <span>Enlaces pequeños. Grandes posibilidades.</span></footer>
+  </div>
+</div>

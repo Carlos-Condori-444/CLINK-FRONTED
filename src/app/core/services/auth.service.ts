@@ -22,7 +22,10 @@ export class AuthService {
 
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.api}/login`, data).pipe(
-      tap(res => this.storage.set('token', res.token))
+      tap(res => {
+        this.storage.set('token', res.token);
+        this.storage.set('usuarioId', String(res.usuarioId));
+      })
     );
   }
 
@@ -32,5 +35,11 @@ export class AuthService {
 
   logout(): void {
     this.storage.remove('token');
+    this.storage.remove('usuarioId');
+  }
+
+  getUsuarioId(): number | null {
+    const id = Number(this.storage.get('usuarioId'));
+    return Number.isSafeInteger(id) && id > 0 ? id : null;
   }
 }

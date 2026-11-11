@@ -25,7 +25,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/dashboard.component')
-        .then(m => m.DashboardComponent)
+        .then(m => m.DashboardComponent),
+    children: [
+      { path: '', pathMatch: 'full', data: { vista: 'resumen' }, loadComponent: () => import('./features/dashboard/dashboard-page.component').then(m => m.DashboardPageComponent) },
+      { path: 'enlaces', data: { vista: 'enlaces' }, loadComponent: () => import('./features/dashboard/dashboard-page.component').then(m => m.DashboardPageComponent) },
+      { path: 'estadisticas', data: { vista: 'estadisticas' }, loadComponent: () => import('./features/dashboard/dashboard-page.component').then(m => m.DashboardPageComponent) },
+      { path: 'qr', data: { vista: 'qr' }, loadComponent: () => import('./features/dashboard/dashboard-page.component').then(m => m.DashboardPageComponent) }
+    ]
   },
 
   { path: '**', redirectTo: 'login' }

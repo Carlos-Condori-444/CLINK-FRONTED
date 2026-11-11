@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
 @Component({
@@ -12,8 +12,16 @@ import { AbstractControl } from '@angular/forms';
 export class FormErrorComponent {
   readonly control = input.required<AbstractControl | null>();
   readonly reglas = input.required<Record<string, string>>();
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
-  readonly mensaje = computed(() => {
+  constructor() {
+    effect(onCleanup => {
+      const subscription = this.control()?.events.subscribe(() => this.changeDetector.markForCheck());
+      onCleanup(() => subscription?.unsubscribe());
+    });
+  }
+
+  mensaje(): string | null {
     const ctrl = this.control();
     if (!ctrl || !ctrl.invalid || !ctrl.touched) return null;
     const errores = ctrl.errors;
@@ -23,5 +31,5 @@ export class FormErrorComponent {
       if (errores[clave]) return reglas[clave];
     }
     return null;
-  });
+  }
 }

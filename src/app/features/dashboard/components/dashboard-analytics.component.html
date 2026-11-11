@@ -1,0 +1,13 @@
+    <section class="analytics">
+      <article class="panel"><div class="panel-heading"><div><h2>Clics por dispositivo</h2><p>Cómo se conectan con tus enlaces</p></div><span class="subtle-tag">Acumulado</span></div>
+        <div class="device-chart"><div class="donut" [style.background]="donut()" role="img" [attr.aria-label]="'Total: ' + data.totalClics() + ' clics. Desglose en la lista adjunta.'"><div><strong>{{ data.totalClics() | number }}</strong><span>clics totales</span></div></div>
+          <ul class="legend">@for (dispositivo of data.dispositivos(); track dispositivo.nombre) { <li><span class="legend-label"><i [style.background]="dispositivo.color"></i>{{ dispositivo.nombre }}</span><strong>{{ dispositivo.valor | number }}</strong><small>{{ porcentaje(dispositivo.valor) | number:'1.0-1' }}%</small></li> }</ul>
+        </div>
+        @if (!data.totalClics()) { <p class="chart-note">Comparte tu primer enlace para comenzar a recibir clics.</p> }
+      </article>
+      <article class="panel"><div class="panel-heading"><div><h2>Fuentes de tráfico</h2><p>Referencias registradas en las visitas</p></div><app-icon name="chart" /></div>
+        @if (data.fuentes() === null) { <div class="chart-empty">No se pudieron cargar las fuentes. Usa «Actualizar» para reintentar.</div> }
+        @else if (!data.canales().length) { <div class="chart-empty"><app-icon name="chart" /><p>Tus primeras visitas contarán su historia aquí.</p><small>Aún no hay fuentes de tráfico registradas.</small></div> }
+        @else { <div class="source-list">@for (canal of data.canales(); track canal.nombre) { <div class="source"><div><span>{{ canal.nombre }}</span><strong>{{ canal.valor | number }} <small>{{ porcentajeFuente(canal.valor) | number:'1.0-1' }}%</small></strong></div><div class="bar"><span [style.width.%]="porcentajeFuente(canal.valor)"></span></div></div> }</div> }
+      </article>
+    </section>

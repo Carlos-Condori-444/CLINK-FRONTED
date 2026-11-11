@@ -1,0 +1,20 @@
+.welcome { position:relative; overflow:hidden; border-radius:14px; background:linear-gradient(112deg,#eee8fb,#f3effc 62%,#eae3f9); padding:30px 32px; min-height:245px; margin-bottom:24px; display:flex; justify-content:space-between; }
+.welcome-tag { display:flex; gap:6px; align-items:center; font-size:8px; letter-spacing:1.3px; color:#8b75b5; font-weight:650; }
+.welcome h2 { font-size:24px; letter-spacing:-.6px; line-height:1.4; font-weight:650; color:#433561; margin:12px 0; }
+.welcome p { font-size:11px; color:#9684ac; line-height:1.8; margin:0 0 18px; }
+.welcome-button { background:white; color:#70539e; border:1px solid #e3d9f2; font-size:11px; padding:9px 13px; }
+.hero-art { width:290px; min-width:220px; position:relative; }
+.orbit { position:absolute; left:50%; top:49%; border:1px solid #dcd1ef; border-radius:50%; transform:translate(-50%,-50%) rotate(-25deg); }
+.orbit-one { width:225px; height:170px; }
+.orbit-two { width:280px; height:220px; }
+.hero-chain { position:absolute; left:50%; top:45%; transform:translate(-50%,-50%) rotate(-19deg); background:#9874d9; box-shadow:8px 12px 0 #d3c1ec,18px 26px 35px #bba6d850; width:105px; height:105px; border-radius:28px; display:grid; place-items:center; color:white; app-icon { transform:scale(2.6); } }
+.floating-tile { position:absolute; display:grid; place-items:center; background:#ffffffd9; border:1px solid white; width:45px; height:45px; border-radius:12px; box-shadow:0 8px 16px #b7a3d52b; color:#a08ac3; }
+.tile-one { left:10px; top:40px; transform:rotate(-12deg); }.tile-two { right:10px; bottom:40px; transform:rotate(12deg); }
+.art-dot { position:absolute; border-radius:50%; background:#b79cdd; width:8px; height:8px; }.dot-one { right:30px; top:15px; }.dot-two { left:50px; bottom:35px; width:5px; height:5px; }
+.art-label { position:absolute; bottom:2px; width:100%; text-align:center; font-size:9px; color:#ad99c5; letter-spacing:.3px; }
+
+@media(min-width:1600px) { .welcome { padding:36px 40px; }.hero-art { width:380px; } }
+@media(max-width:1200px) { .hero-art { width:230px; } }
+@media(max-width:1000px) { .hero-art { min-width:160px; width:160px; opacity:.7; }.orbit-two { width:200px; height:180px; }.orbit-one { width:150px; height:130px; }.hero-chain { width:80px; height:80px; border-radius:20px; }.floating-tile { width:32px; height:32px; }.tile-one { left:0; }.tile-two { right:0; }.art-label { display:none; } }
+@media(max-width:560px) { .welcome { padding:24px; min-height:0; }.welcome h2 { font-size:21px; }.welcome-tag { font-size:7px; }.hero-art { display:none; } }
+.welcome-button { display:inline-flex; align-items:center; gap:8px; border-radius:7px; } button:disabled { opacity:.5; cursor:not-allowed; }
